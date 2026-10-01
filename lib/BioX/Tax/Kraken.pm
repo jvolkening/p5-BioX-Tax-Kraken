@@ -11,6 +11,7 @@ use Memoize;
 use constant N_VALID_COLUMNS => 4;
 
 memoize('BioX::Tax::Kraken::is_ancestor');
+memoize('BioX::Tax::Kraken::parent');
 
 sub new {
 
@@ -46,7 +47,7 @@ sub parent {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return $self->{tax}->{$tid}->{parent};
+    return (split "\0", $self->{tax}->{$tid})[0];
 
 }
 
@@ -54,7 +55,7 @@ sub name {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return $self->{tax}->{$tid}->{name};
+    return (split "\0", $self->{tax}->{$tid})[1];
 
 }
 
@@ -62,7 +63,7 @@ sub rank {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return $self->{tax}->{$tid}->{rank};
+    return (split "\0", $self->{tax}->{$tid})[2];
 
 }
 
@@ -79,11 +80,11 @@ sub children {
 sub is_ancestor {
 
     my ($self, $child, $parent) = @_;
-    my $node = $self->{tax}->{$child};
-    return if (! defined $node);
-    return 1 if ($node->[1] eq $parent);
-    return 0 if ($node->[1] eq $child); # reached root
-    return $self->is_ancestor( $node->[1], $parent );
+    return if (! defined $self->{tax}->{$child});
+    my $p = $self->parent($child);
+    return 1 if ($p eq $parent);
+    return 0 if ($p eq $child); # reached root
+    return $self->is_ancestor( $p, $parent );
 
 }
 
@@ -119,11 +120,7 @@ sub _load {
         if ($f[0] =~ /\D/ || $f[1] =~ /\D/) {
             die "Invalid taxDB format: expected integers in first two columns";
         }
-        $self->{tax}->{$f[0]} = [ @f[1..3] ];
-            #parent => $f[1],
-            #name => $f[2],
-            #rank => $f[3],
-        #};
+        $self->{tax}->{$f[0]} = join "\0", @f[1..3];
     };
     close $fh;
     $self->{fh} = undef;
