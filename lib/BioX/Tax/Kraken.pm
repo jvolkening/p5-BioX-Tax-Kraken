@@ -13,11 +13,6 @@ use constant PARENT => 0;
 use constant NAME => 1;
 use constant RANK => 2;
 
-memoize('BioX::Tax::Kraken::is_ancestor');
-memoize('BioX::Tax::Kraken::parent');
-memoize('BioX::Tax::Kraken::name');
-memoize('BioX::Tax::Kraken::rank');
-
 sub new {
 
     my ($class, $fn_in) = @_;
@@ -28,6 +23,82 @@ sub new {
     $self->_load();
 
     return $self;
+
+}
+
+sub parent {
+
+    my ($self, $tid) = @_;
+
+    return if (! defined $self->{tax}->{$tid});
+    return $self->{_parent}->{$tid}
+        if (defined $self->{_parent}->{$tid});
+    my $p = (split "\0", $self->{tax}->{$tid})[PARENT];
+    $self->{_parent}->{$tid} = $p;
+
+    return $p;
+
+}
+
+sub name {
+
+    my ($self, $tid) = @_;
+
+    return if (! defined $self->{tax}->{$tid});
+    return $self->{_name}->{$tid}
+        if (defined $self->{_name}->{$tid});
+    my $n = (split "\0", $self->{tax}->{$tid})[NAME];
+    $self->{_name}->{$tid} = $n;
+
+    return $n;
+
+}
+
+sub rank {
+
+    my ($self, $tid) = @_;
+
+    return if (! defined $self->{tax}->{$tid});
+    return $self->{_rank}->{$tid}
+        if (defined $self->{_rank}->{$tid});
+    my $r = (split "\0", $self->{tax}->{$tid})[RANK];
+    $self->{_rank}->{$tid} = $r;
+
+    return $r;
+
+}
+
+sub children {
+
+    my ($self, $tid) = @_;
+
+    return grep {
+        $self->is_ancestor($_, $tid)
+    } keys %{ $self->{tax} };
+
+}
+
+sub is_ancestor {
+
+    my ($self, $child, $parent) = @_;
+    return if (! defined $self->{tax}->{$child});
+    my $tag = "$child\b$parent";
+    return $self->{_is_ancestor}->{$tag}
+        if defined $self->{_is_ancestor}->{$tag};
+    
+    my $p = $self->parent($child);
+    my $result;
+    if ($p eq $parent) {
+        $result = 1;
+    }
+    elsif ($p eq $child) {
+        $result = 0;
+    }
+    else {
+        $result = $self->is_ancestor( $p, $parent );
+    }
+    $self->{_is_ancestor}->{$tag} = $result;
+    return $result;
 
 }
 
@@ -48,50 +119,6 @@ sub _set_handle {
 
 }
 
-sub parent {
-
-    my ($self, $tid) = @_;
-    return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[PARENT];
-
-}
-
-sub name {
-
-    my ($self, $tid) = @_;
-    return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[NAME];
-
-}
-
-sub rank {
-
-    my ($self, $tid) = @_;
-    return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[RANK];
-
-}
-
-sub children {
-
-    my ($self, $tid) = @_;
-
-    return grep {
-        $self->is_ancestor($_, $tid)
-    } keys %{ $self->{tax} };
-
-}
-
-sub is_ancestor {
-
-    my ($self, $child, $parent) = @_;
-    return if (! defined $self->{tax}->{$child});
-    my $p = $self->parent($child);
-    return 1 if ($p eq $parent);
-    return 0 if ($p eq $child); # reached root
-    return $self->is_ancestor( $p, $parent );
-
-}
 
 sub _is_xz {
 
