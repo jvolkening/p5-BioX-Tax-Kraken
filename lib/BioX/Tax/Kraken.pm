@@ -6,7 +6,6 @@ use 5.016;
 use autodie;
 
 use IPC::Cmd qw/can_run/;
-use Memoize;
 
 use constant N_VALID_COLUMNS => 4;
 use constant PARENT => 0;
