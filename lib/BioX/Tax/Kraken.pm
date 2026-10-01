@@ -9,9 +9,14 @@ use IPC::Cmd qw/can_run/;
 use Memoize;
 
 use constant N_VALID_COLUMNS => 4;
+use constant PARENT => 0;
+use constant NAME => 1;
+use constant RANK => 2;
 
 memoize('BioX::Tax::Kraken::is_ancestor');
 memoize('BioX::Tax::Kraken::parent');
+memoize('BioX::Tax::Kraken::name');
+memoize('BioX::Tax::Kraken::rank');
 
 sub new {
 
@@ -47,7 +52,7 @@ sub parent {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[0];
+    return (split "\0", $self->{tax}->{$tid})[PARENT];
 
 }
 
@@ -55,7 +60,7 @@ sub name {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[1];
+    return (split "\0", $self->{tax}->{$tid})[NAME];
 
 }
 
@@ -63,7 +68,7 @@ sub rank {
 
     my ($self, $tid) = @_;
     return if (! defined $self->{tax}->{$tid});
-    return (split "\0", $self->{tax}->{$tid})[2];
+    return (split "\0", $self->{tax}->{$tid})[RANK];
 
 }
 
@@ -120,6 +125,9 @@ sub _load {
         if ($f[0] =~ /\D/ || $f[1] =~ /\D/) {
             die "Invalid taxDB format: expected integers in first two columns";
         }
+        # uses < 50% memory to store data as null-padded strings instead of
+        # Perl nested arrays or hashes. Can be significantly slower to extract
+        # data on millions of calls, though.
         $self->{tax}->{$f[0]} = join "\0", @f[1..3];
     };
     close $fh;
