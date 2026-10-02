@@ -16,3 +16,4 @@ t/pod.t
 t/test.t
 t/test_data/taxDB.sub
 t/test_data/taxDB.sub.xz
+t/test_data/taxDB.trunc

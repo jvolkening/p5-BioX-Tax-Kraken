@@ -72,9 +72,10 @@ sub children {
 
     my ($self, $tid) = @_;
 
-    return grep {
+    return if (! defined $self->{tax}->{$tid});
+    return [ grep {
         $self->is_ancestor($_, $tid)
-    } keys %{ $self->{tax} };
+    } keys %{ $self->{tax} } ];
 
 }
 
@@ -82,6 +83,7 @@ sub is_ancestor {
 
     my ($self, $child, $parent) = @_;
     return if (! defined $self->{tax}->{$child});
+    return if (! defined $self->{tax}->{$parent});
     my $tag = "$child\b$parent";
     return $self->{_is_ancestor}->{$tag}
         if defined $self->{_is_ancestor}->{$tag};
@@ -109,7 +111,7 @@ sub lineage {
     return $self->{_lineage}->{$tid}
         if defined $self->{_lineage}->{$tid};
 
-    my @lineage = ($self);
+    my @lineage = ($tid);
     my $parent = $self->parent($tid);
     while ($parent ne $tid) {
         push @lineage, $parent;
@@ -191,9 +193,6 @@ sub _load {
                 N_VALID_COLUMNS,
                 scalar @f,
             );
-        }
-        if ($f[0] =~ /\D/ || $f[1] =~ /\D/) {
-            die "Invalid taxDB format: expected integers in first two columns";
         }
         # uses < 50% memory to store data as null-padded strings instead of
         # Perl nested arrays or hashes. Can be significantly slower to extract
