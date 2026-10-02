@@ -2,7 +2,7 @@ BioX::Tax::Kraken
 =========
 
 [![Tests](https://github.com/jvolkening/p5-BioX-Tax-Kraken/actions/workflows/tests.yml/badge.svg)](https://github.com/jvolkening/p5-BioX-Tax-Kraken/actions/workflows/tests.yml)
-[![Coverage Status](https://coveralls.io/repos/github/jvolkening/p5-BioX-Tax-Kraken/badge.svg?branch=master)](https://coveralls.io/github/jvolkening/p5-BioX-Tax-Kraken?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jvolkening/p5-BioX-Tax-Kraken/badge.svg?branch=main)](https://coveralls.io/github/jvolkening/p5-BioX-Tax-Kraken?branch=main)
 [![CPAN version](https://badge.fury.io/pl/BioX-Tax-Kraken.svg)](https://badge.fury.io/pl/BioX-Tax-Kraken)
 
 **WARNING**: Currently in pre-alpha phase. Do not use!
