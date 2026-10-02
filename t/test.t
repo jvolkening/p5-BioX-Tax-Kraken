@@ -7,7 +7,6 @@ use Test2::V0;
 
 use FindBin;
 use IPC::Cmd qw/can_run/;
-use List::Util qw/all zip/;
 use Scalar::Util qw/reftype/;
 
 use BioX::Tax::Kraken;

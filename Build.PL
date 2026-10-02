@@ -44,10 +44,11 @@ my $builder = $deployer->new(
         'Module::Build' => 0,
     },
     requires => {
-        'IPC::Cmd'       => 0,
+        'IPC::Cmd' => 0,
     },
     test_requires => {
-        'Test::V0'      => 0,
+        'Test::V0' => 0,
+        'Test::Pod::Coverage' => 0,
     },
     meta_merge => {
         resources => {
