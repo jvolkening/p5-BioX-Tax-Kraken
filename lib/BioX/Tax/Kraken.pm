@@ -31,10 +31,10 @@ sub parent {
     my ($self, $tid) = @_;
 
     return if (! defined $self->{tax}->{$tid});
-    return $self->{_parent}->{$tid}
-        if (defined $self->{_parent}->{$tid});
+    return $self->{_c_parent}->{$tid}
+        if (defined $self->{_c_parent}->{$tid});
     my $p = (split "\0", $self->{tax}->{$tid})[PARENT];
-    $self->{_parent}->{$tid} = $p;
+    $self->{_c_parent}->{$tid} = $p;
 
     return $p;
 
@@ -45,10 +45,10 @@ sub name {
     my ($self, $tid) = @_;
 
     return if (! defined $self->{tax}->{$tid});
-    return $self->{_name}->{$tid}
-        if (defined $self->{_name}->{$tid});
+    return $self->{_c_name}->{$tid}
+        if (defined $self->{_c_name}->{$tid});
     my $n = (split "\0", $self->{tax}->{$tid})[NAME];
-    $self->{_name}->{$tid} = $n;
+    $self->{_c_name}->{$tid} = $n;
 
     return $n;
 
@@ -59,10 +59,10 @@ sub rank {
     my ($self, $tid) = @_;
 
     return if (! defined $self->{tax}->{$tid});
-    return $self->{_rank}->{$tid}
-        if (defined $self->{_rank}->{$tid});
+    return $self->{_c_rank}->{$tid}
+        if (defined $self->{_c_rank}->{$tid});
     my $r = (split "\0", $self->{tax}->{$tid})[RANK];
-    $self->{_rank}->{$tid} = $r;
+    $self->{_c_rank}->{$tid} = $r;
 
     return $r;
 
@@ -73,9 +73,9 @@ sub children {
     my ($self, $tid) = @_;
 
     return if (! defined $self->{tax}->{$tid});
-    return [ grep {
+    return grep {
         $self->is_ancestor($_, $tid)
-    } keys %{ $self->{tax} } ];
+    } keys %{ $self->{tax} };
 
 }
 
@@ -84,22 +84,25 @@ sub is_ancestor {
     my ($self, $child, $parent) = @_;
     return if (! defined $self->{tax}->{$child});
     return if (! defined $self->{tax}->{$parent});
+    return 0 if ($child eq $parent); # save some time, maybe
     my $tag = "$child\b$parent";
-    return $self->{_is_ancestor}->{$tag}
-        if defined $self->{_is_ancestor}->{$tag};
+    return $self->{_c_is_ancestor}->{$tag}
+        if defined $self->{_c_is_ancestor}->{$tag};
     
     my $p = $self->parent($child);
     my $result;
     if ($p eq $parent) {
         $result = 1;
     }
+    # the root node is a parent of itself;
+    # prevent endless recursion here
     elsif ($p eq $child) {
         $result = 0;
     }
     else {
         $result = $self->is_ancestor( $p, $parent );
     }
-    $self->{_is_ancestor}->{$tag} = $result;
+    $self->{_c_is_ancestor}->{$tag} = $result;
     return $result;
 
 }
@@ -107,9 +110,10 @@ sub is_ancestor {
 sub lineage {
 
     my ($self, $tid) = @_;
+    my $orig = $tid;
     return if (! defined $self->{tax}->{$tid});
-    return $self->{_lineage}->{$tid}
-        if defined $self->{_lineage}->{$tid};
+    return split( "\0", $self->{_c_lineage}->{$tid} )
+        if defined $self->{_c_lineage}->{$tid};
 
     my @lineage = ($tid);
     my $parent = $self->parent($tid);
@@ -119,8 +123,8 @@ sub lineage {
         $parent = $self->parent($tid);
     }
     @lineage = reverse @lineage;
-    $self->{_lineage}->{$tid} = \@lineage;
-    return \@lineage;
+    $self->{_c_lineage}->{$orig} = join "\0", @lineage;
+    return @lineage;
 
 }
 
@@ -131,7 +135,7 @@ sub lca {
     return if (! scalar @ids);
     return if any {! defined $self->{tax}->{$_} } @ids;
 
-    my @l = map { $self->lineage($_) } @ids;
+    my @l = map { [ $self->lineage($_) ] } @ids;
     my $lca;
     my $i = 0;
     while (1) {
@@ -271,6 +275,7 @@ a four-column tab-delimited text file, where the columns contain:
 =item B<parent ID>
 
 =item B<name> (typically scientific)
+
 =item B<rank>
 
 =back
@@ -352,7 +357,7 @@ database.
 Given a valid taxonomic ID, calculates the taxonomic lineage from the tree
 root to the given node, inclusive.
 
-Returns an array reference, or undefined if the given ID was not found in the
+Returns a list of IDs, or undefined if the given ID was not found in the
 database.
 
 =item B<lca> I<tax ID 1> I<tax ID 2> ...
@@ -372,7 +377,7 @@ other instance methods, this method currently must traverse the *entire*
 database each time it is called, and it therefore will be a significant
 bottleneck if called over thousands or millions of inputs.
 
-Returns an unsorted array reference, or undefined if the given ID was not
+Returns an unsorted list of IDs, or undefined if the given ID was not
 found in the database.
 
 =back

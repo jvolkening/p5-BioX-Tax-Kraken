@@ -7,6 +7,7 @@ use Test2::V0;
 
 use FindBin;
 use IPC::Cmd qw/can_run/;
+use List::Util qw/all zip/;
 use Scalar::Util qw/reftype/;
 
 use BioX::Tax::Kraken;
@@ -85,6 +86,10 @@ ok(
     !$tax->is_ancestor(9031, 3880),
     'is_ancestor() returns false for non-ancestor'
 );
+ok(
+    !$tax->is_ancestor(9031, 9031),
+    'is_ancestor() returns false for self-compare'
+);
 is(
     $tax->is_ancestor(99999, 9030) => undef,
     'is_ancestor() returns undef for invalid child ID'
@@ -95,44 +100,58 @@ is(
 );
 
 # Test lineage() method
-my $lineage = $tax->lineage(9031);
-is(
-    reftype($lineage) => 'ARRAY',
-    'lineage() returns an array reference'
-);
+my @lineage = $tax->lineage(9031);
 ok(
-    @$lineage > 1,
+    @lineage > 1,
     'lineage() returns multiple IDs'
 );
 is(
-    $lineage->[0] => '1',
+    $lineage[0] => '1',
     'lineage() starts with root'
 );
 is(
-    $lineage->[-1] => '9031',
+    $lineage[-1] => '9031',
     'lineage() ends with query ID'
 );
 ok(
-    grep { $_ eq '9030' } @$lineage,
+    grep { $_ eq '9030' } @lineage,
     'lineage() contains parent'
 );
 is(
     $tax->lineage(99999) => undef,
     'lineage() returns undef for invalid ID'
 );
-
-# Test children() method
-my $children = $tax->children(9030);
+@lineage = $tax->lineage(9031);
+ok(
+    @lineage > 1,
+    'lineage() still returns multiple IDs'
+);
 is(
-    reftype($children) => 'ARRAY',
-    'children() returns an array reference'
+    $lineage[0] => '1',
+    'lineage() still starts with root'
+);
+is(
+    $lineage[-1] => '9031',
+    'lineage() still ends with query ID'
 );
 ok(
-    @$children > 0,
+    grep { $_ eq '9030' } @lineage,
+    'lineage() still contains parent'
+);
+@lineage = $tax->lineage(1);
+ok(
+    @lineage == 1,
+    'lineage(1) returns exactly one ID'
+);
+
+# Test children() method
+my @children = $tax->children(9030);
+ok(
+    @children > 0,
     'children() returns at least one child'
 );
 ok(
-    grep { $_ eq '9031' } @$children,
+    grep { $_ eq '9031' } @children,
     'children() includes expected child (9031)'
 );
 is(
@@ -212,3 +231,4 @@ like(
 
 done_testing;
 exit;
+
