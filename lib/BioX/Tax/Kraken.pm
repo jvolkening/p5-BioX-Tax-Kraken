@@ -81,13 +81,22 @@ sub children {
 
 sub is_ancestor {
 
-    my ($self, $child, $parent) = @_;
+    my ($self, $child, $parent, $visited) = @_;
+
+    $visited //= {}; # on first iteration
+
     return if (! defined $self->{tax}->{$child});
     return if (! defined $self->{tax}->{$parent});
     return 0 if ($child eq $parent); # save some time, maybe
+
     my $tag = "$child\b$parent";
     return $self->{_c_is_ancestor}->{$tag}
         if defined $self->{_c_is_ancestor}->{$tag};
+
+    # Detect cycle: if we've visited this child in this query, stop
+    if ($visited->{$child}++) {
+        die "Cycle detected at $child! Bailing defensively...";
+    }
     
     my $p = $self->parent($child);
     my $result;
@@ -100,9 +109,11 @@ sub is_ancestor {
         $result = 0;
     }
     else {
-        $result = $self->is_ancestor( $p, $parent );
+        $result = $self->is_ancestor( $p, $parent, $visited );
     }
     $self->{_c_is_ancestor}->{$tag} = $result;
+    delete $visited->{$child};
+
     return $result;
 
 }
@@ -117,7 +128,12 @@ sub lineage {
 
     my @lineage = ($tid);
     my $parent = $self->parent($tid);
+    my $visited = { $tid => 1 };
+
     while ($parent ne $tid) {
+        if ($visited->{$parent}++) {
+            die "Cycle detected in lineage of $orig at node $parent";
+        }
         push @lineage, $parent;
         $tid = $parent;
         $parent = $self->parent($tid);

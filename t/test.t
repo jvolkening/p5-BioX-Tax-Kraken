@@ -18,6 +18,7 @@ chdir $FindBin::Bin;
 my $test_db         = 'test_data/taxDB.sub';
 my $test_db_xz      = 'test_data/taxDB.sub.xz';
 my $test_db_trunc   = 'test_data/taxDB.trunc';
+my $test_db_loop    = 'test_data/taxDB.loop';
 
 # Test database loading
 my $tax = BioX::Tax::Kraken->new($test_db);
@@ -227,6 +228,18 @@ like(
     dies { BioX::Tax::Kraken->new($test_db_trunc) },
     qr/Invalid taxDB format/,
     'Constructor throws expected error on bad input'
+);
+
+$tax = BioX::Tax::Kraken->new($test_db_loop);
+like(
+    dies { $tax->is_ancestor(99992, 1) },
+    qr/Cycle detected/,
+    'is_ancestor() throws expected error on cylical path'
+);
+like(
+    dies { $tax->lineage(99993) },
+    qr/Cycle detected/,
+    'lineage() throws expected error on cylical path'
 );
 
 done_testing;
