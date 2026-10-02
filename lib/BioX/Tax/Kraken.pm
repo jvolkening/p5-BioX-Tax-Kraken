@@ -280,6 +280,9 @@ say join ' > ',
 
 =head1 DESCRIPTION
 
+NOTE:: This distribution is currently in alpha stage. The API may change
+without notice. You have been warned.
+
 C<BioX::Tax::Kraken> is a simple interface to a Kraken-style flatfile
 taxonomic database, typically using the filename 'taxDB'. This file format is
 a four-column tab-delimited text file, where the columns contain:
