@@ -69,49 +69,118 @@ is(
 );
 
 # Test is_ancestor() method
-ok( $tax->is_ancestor(9031, 9030), 'is_ancestor() detects direct parent');
-ok( $tax->is_ancestor(9031, 9005), 'is_ancestor() detects distant ancestor');
-ok( $tax->is_ancestor(9031, 7742), 'is_ancestor() detects Vertebrata ancestor');
-ok( !$tax->is_ancestor(9031, 3880), 'is_ancestor() returns false for non-ancestor');
-is( $tax->is_ancestor(99999, 9030), undef, 'is_ancestor() returns undef for invalid child ID');
-is( $tax->is_ancestor(9031, 99999), undef, 'is_ancestor() returns undef for invalid parent ID');
+ok(
+    $tax->is_ancestor(9031, 9030),
+    'is_ancestor() detects direct parent'
+);
+ok(
+    $tax->is_ancestor(9031, 9005),
+    'is_ancestor() detects distant ancestor'
+);
+ok(
+    $tax->is_ancestor(9031, 7742),
+    'is_ancestor() detects Vertebrata ancestor'
+);
+ok(
+    !$tax->is_ancestor(9031, 3880),
+    'is_ancestor() returns false for non-ancestor'
+);
+is(
+    $tax->is_ancestor(99999, 9030) => undef,
+    'is_ancestor() returns undef for invalid child ID'
+);
+is(
+    $tax->is_ancestor(9031, 99999) => undef,
+    'is_ancestor() returns undef for invalid parent ID'
+);
 
 # Test lineage() method
 my $lineage = $tax->lineage(9031);
-is( reftype($lineage), 'ARRAY' , 'lineage() returns an array reference');
-ok( @$lineage > 1, 'lineage() returns multiple IDs');
-is( $lineage->[0], '1', 'lineage() starts with root');
-is( $lineage->[-1], '9031', 'lineage() ends with query ID');
-ok( grep { $_ eq '9030' } @$lineage, 'lineage() contains parent');
-is( $tax->lineage(99999), undef, 'lineage() returns undef for invalid ID');
+is(
+    reftype($lineage) => 'ARRAY',
+    'lineage() returns an array reference'
+);
+ok(
+    @$lineage > 1,
+    'lineage() returns multiple IDs'
+);
+is(
+    $lineage->[0] => '1',
+    'lineage() starts with root'
+);
+is(
+    $lineage->[-1] => '9031',
+    'lineage() ends with query ID'
+);
+ok(
+    grep { $_ eq '9030' } @$lineage,
+    'lineage() contains parent'
+);
+is(
+    $tax->lineage(99999) => undef,
+    'lineage() returns undef for invalid ID'
+);
 
 # Test children() method
 my $children = $tax->children(9030);
-is( reftype($children), 'ARRAY', 'children() returns an array reference');
-ok( @$children > 0, 'children() returns at least one child');
-ok( grep { $_ eq '9031' } @$children, 'children() includes expected child (9031)');
-is( $tax->children(99999), undef, 'children() returns undef for invalid ID');
+is(
+    reftype($children) => 'ARRAY',
+    'children() returns an array reference'
+);
+ok(
+    @$children > 0,
+    'children() returns at least one child'
+);
+ok(
+    grep { $_ eq '9031' } @$children,
+    'children() includes expected child (9031)'
+);
+is(
+    $tax->children(99999) => undef,
+    'children() returns undef for invalid ID'
+);
 
 # Test lca() method with two IDs
 my $lca = $tax->lca(9031, 3877);
-ok( defined $lca, 'lca() returns defined value for two valid IDs');
-is( $tax->name($lca), 'Eukaryota', 'lca(9031, 3877) returns Eukaryota');
+ok(
+    defined $lca,
+    'lca() returns defined value for two valid IDs'
+);
+is(
+    $tax->name($lca) => 'Eukaryota',
+    'lca(9031, 3877) returns Eukaryota'
+);
 
 # Test lca() with same lineage
 $lca = $tax->lca(9031, 9072);
-is( $lca, '9072', 'lca(9031, 9072) returns Phasianinae');
+is(
+    $lca => '9072',
+    'lca(9031, 9072) returns Phasianinae'
+);
 
 # Test lca() with multiple IDs
 $lca = $tax->lca(9031, 3880, 129337);
-is( $lca, '131567', 'lca() with 3+ IDs returns common ancestor');
+is(
+    $lca => '131567',
+    'lca() with 3+ IDs returns common ancestor'
+);
 
 # Test lca() with non-intersecting multiple IDs
 $lca = $tax->lca(9031, 3880, 44770);
-is( $lca, '1', 'lca() returns root if appropriate');
+is(
+    $lca => '1',
+    'lca() returns root if appropriate'
+);
 
 # Test lca() with invalid ID
-is( $tax->lca(9031, 99999), undef, 'lca() returns undef if any ID is invalid');
-is( $tax->lca(), undef, 'lca() returns undef with no arguments');
+is(
+    $tax->lca(9031, 99999) => undef,
+    'lca() returns undef if any ID is invalid'
+);
+is(
+    $tax->lca() => undef,
+    'lca() returns undef with no arguments'
+);
 
 SKIP: {
     skip("Skipping xz tests, xz not available")
@@ -125,8 +194,14 @@ SKIP: {
     );
     
     # Verify xz-loaded database works correctly
-    is( $tax_xz->name(9031), 'Gallus gallus', 'name() works on xz-compressed database');
-    is( $tax_xz->rank(9031), 'species', 'rank() works on xz-compressed database');
+    is(
+        $tax_xz->name(9031) => 'Gallus gallus',
+        'name() works on xz-compressed database'
+    );
+    is(
+        $tax_xz->rank(9031) => 'species',
+        'rank() works on xz-compressed database'
+    );
 }
 
 like(
