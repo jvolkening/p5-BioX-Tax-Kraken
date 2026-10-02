@@ -11,4 +11,7 @@
 /pm_to_blib
 *.tar.gz
 releases
-MANIFEST.bak
+/MANIFEST.bak
+/Build
+/_build
+/cover_db

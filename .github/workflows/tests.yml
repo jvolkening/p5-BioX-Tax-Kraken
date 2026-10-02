@@ -42,7 +42,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cpanm -n Devel::Cover::Report::Coveralls
-          cover -ignore ^_build -test -report Coveralls
+          ./Build testcover
+          cover -report Coveralls
 
   deploy:
     if: false # don't ship to CPAN quite yet
