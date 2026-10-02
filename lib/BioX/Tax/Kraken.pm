@@ -252,13 +252,13 @@ say $tax->name(
 # 'Eukaryota'
 say join ' > ',
     map {$tax->name($_)}
-    @{ $tax->lineage(HSV1) };
+    $tax->lineage(HSV1);
 # 'root > Viruses > Duplodnaviria > Heunggongvirae > Peploviricota >
 # Herviviricetes > Herpesvirales > Orthoherpesviridae > Alphaherpesvirinae >
 # Simplexvirus > Simplexvirus humanalpha1'
 say join ' > ',
     map {$tax->rank($_)}
-    @{ $tax->lineage(HSV1) };
+    $tax->lineage(HSV1);
 # 'no rank > domain > clade > kingdom > phylum > class > order > family >
 # subfamily > genus > species'
 
@@ -348,7 +348,7 @@ database.
 
 =item B<lineage> I<tax ID>
 
-    for my $id @{ $tax->lineage(9031) } {
+    for my $id ( $tax->lineage(9031) ) {
         say sprintf "%s: %s",
             $tax->rank($id),
             $tax->name($id);
@@ -362,6 +362,8 @@ database.
 
 =item B<lca> I<tax ID 1> I<tax ID 2> ...
 
+    my $oldun = $tax->lca(9031, 9606);
+
 Given two or more tax IDs, calculates the last common ancestor (LCA, aka MRCA)
 in common to all given nodes.
 
@@ -369,6 +371,8 @@ Returns a taxonomic ID, or undefined if one or more given IDs were not found
 in the database.
 
 =item B<children> I<tax ID>
+
+    my @descendents = $tax->children(9031);
 
 Given a valid tax ID, traverses the taxonomic tree to collect all intermediate
 and leaf nodes that descend from that ID. BEWARE: The class does not currently
