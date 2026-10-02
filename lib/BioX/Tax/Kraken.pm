@@ -1,4 +1,4 @@
-package BioX::Tax::Kraken 0.001;
+package BioX::Tax::Kraken 0.001001;
 
 use strict;
 use warnings;

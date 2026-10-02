@@ -1,5 +1,8 @@
 Revision history for BioX-Tax-Kraken
 
+0.001001 2026-10-02
+         Fix some test issues on older perls
+
 0.001    2026-10-02
          Initial release
 
