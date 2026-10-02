@@ -47,7 +47,7 @@ my $builder = $deployer->new(
         'IPC::Cmd'       => 0,
     },
     test_requires => {
-        'Test::More'      => 0,
+        'Test::V0'      => 0,
     },
     meta_merge => {
         resources => {
