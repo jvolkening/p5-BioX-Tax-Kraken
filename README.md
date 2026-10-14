@@ -5,7 +5,7 @@ BioX::Tax::Kraken
 [![Coverage Status](https://coveralls.io/repos/github/jvolkening/p5-BioX-Tax-Kraken/badge.svg?branch=main)](https://coveralls.io/github/jvolkening/p5-BioX-Tax-Kraken?branch=main)
 [![CPAN version](https://badge.fury.io/pl/BioX-Tax-Kraken.svg)](https://badge.fury.io/pl/BioX-Tax-Kraken)
 
-**WARNING**: Currently in pre-alpha phase. Do not use!
+**WARNING**: Currently in testing phase. The API may change in future releases without notice. You have been warned!
 
 `BioX::Tax::Kraken` is a simple interface to a Kraken-style flatfile
 taxonomic database, typically using the filename 'taxDB'. This file format is

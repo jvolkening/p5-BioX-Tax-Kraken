@@ -285,7 +285,7 @@ say join ' > ',
 
 =head1 DESCRIPTION
 
-NOTE:: This distribution is currently in alpha stage. The API may change
+NOTE:: This distribution is currently in testing phase. The API may change
 without notice. You have been warned.
 
 C<BioX::Tax::Kraken> is a simple interface to a Kraken-style flatfile
