@@ -1,4 +1,4 @@
-package BioX::Tax::Kraken 0.001002;
+package BioX::Tax::Kraken 0.001003;
 
 use strict;
 use warnings;
@@ -238,50 +238,50 @@ BioX::Tax::Kraken - simple access to Kraken-style taxDB taxonomy database
 
 =head1 SYNOPSIS
 
-use BioX::Tax::Kraken;
+    use BioX::Tax::Kraken;
 
-use constant CHICKEN => 9031;
-use constant HUMAN => 9606;
-use constant VERTEBRATA => 7742;
-use constant WHITE_OAK => 3513;
-use constant HSV1 => 10298;
+    use constant CHICKEN => 9031;
+    use constant HUMAN => 9606;
+    use constant VERTEBRATA => 7742;
+    use constant WHITE_OAK => 3513;
+    use constant HSV1 => 10298;
 
-my $tax = BioX::Tax::Kraken->new($ARGV[0]);
+    my $tax = BioX::Tax::Kraken->new($ARGV[0]);
 
-say $tax->name(CHICKEN);
-# 'Gallus gallus'
-say $tax->rank(CHICKEN);
-# 'species'
-say $tax->name(
-    $tax->parent(CHICKEN)
-);
-# 'Gallus'
+    say $tax->name(CHICKEN);
+    # 'Gallus gallus'
+    say $tax->rank(CHICKEN);
+    # 'species'
+    say $tax->name(
+        $tax->parent(CHICKEN)
+    );
+    # 'Gallus'
 
-say $tax->is_ancestor(CHICKEN, VERTEBRATA) ? 'Y' : 'N';
-# 'Y'
-say $tax->is_ancestor(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
-# 'N'
-say $tax->a_isa_b(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
-# 'N'
-say $tax->name(
-    $tax->lca(CHICKEN, HUMAN)
-);
-# 'Amniota'
-say $tax->name(
-    $tax->lca(CHICKEN, WHITE_OAK)
-);
-# 'Eukaryota'
-say join ' > ',
-    map {$tax->name($_)}
-    $tax->lineage(HSV1);
-# 'root > Viruses > Duplodnaviria > Heunggongvirae > Peploviricota >
-# Herviviricetes > Herpesvirales > Orthoherpesviridae > Alphaherpesvirinae >
-# Simplexvirus > Simplexvirus humanalpha1'
-say join ' > ',
-    map {$tax->rank($_)}
-    $tax->lineage(HSV1);
-# 'no rank > domain > clade > kingdom > phylum > class > order > family >
-# subfamily > genus > species'
+    say $tax->is_ancestor(CHICKEN, VERTEBRATA) ? 'Y' : 'N';
+    # 'Y'
+    say $tax->is_ancestor(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
+    # 'N'
+    say $tax->a_isa_b(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
+    # 'N'
+    say $tax->name(
+        $tax->lca(CHICKEN, HUMAN)
+    );
+    # 'Amniota'
+    say $tax->name(
+        $tax->lca(CHICKEN, WHITE_OAK)
+    );
+    # 'Eukaryota'
+    say join ' > ',
+        map {$tax->name($_)}
+        $tax->lineage(HSV1);
+    # 'root > Viruses > Duplodnaviria > Heunggongvirae > Peploviricota >
+    # Herviviricetes > Herpesvirales > Orthoherpesviridae > Alphaherpesvirinae >
+    # Simplexvirus > Simplexvirus humanalpha1'
+    say join ' > ',
+        map {$tax->rank($_)}
+        $tax->lineage(HSV1);
+    # 'no rank > domain > clade > kingdom > phylum > class > order > family >
+    # subfamily > genus > species'
 
 =head1 DESCRIPTION
 
