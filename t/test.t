@@ -98,6 +98,15 @@ is(
     $tax->is_ancestor(9031, 99999) => undef,
     'is_ancestor() returns undef for invalid parent ID'
 );
+# quick checks of alias
+ok(
+    $tax->a_isa_b(9031, 7742),
+    'a_isa_b() detects Vertebrata ancestor'
+);
+ok(
+    !$tax->a_isa_b(9031, 3880),
+    'a_isa_b() returns false for non-ancestor'
+);
 
 # Test lineage() method
 my @lineage = $tax->lineage(9031);

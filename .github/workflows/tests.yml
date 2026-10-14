@@ -46,7 +46,6 @@ jobs:
           cover -report Coveralls
 
   deploy:
-    if: false # don't ship to CPAN quite yet
     needs: test
     runs-on: ubuntu-latest
     env:

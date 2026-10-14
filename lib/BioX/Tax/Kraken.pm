@@ -1,4 +1,4 @@
-package BioX::Tax::Kraken 0.001001;
+package BioX::Tax::Kraken 0.001002;
 
 use strict;
 use warnings;
@@ -117,6 +117,9 @@ sub is_ancestor {
     return $result;
 
 }
+
+# alias method
+*a_isa_b = \&is_ancestor;
 
 sub lineage {
 
@@ -258,6 +261,8 @@ say $tax->is_ancestor(CHICKEN, VERTEBRATA) ? 'Y' : 'N';
 # 'Y'
 say $tax->is_ancestor(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
 # 'N'
+say $tax->a_isa_b(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
+# 'N'
 say $tax->name(
     $tax->lca(CHICKEN, HUMAN)
 );
@@ -364,6 +369,11 @@ is an ancestor (not necessarily direct) of the first.
 
 Returns a boolean value, or undefined if either ID was not found in the
 database.
+
+=item B<a_isa_b> I<child ID> I<parent ID>
+
+Alias of C<is_ancestor> whose name makes it a little easier to remember the
+order of arguments
 
 =item B<lineage> I<tax ID>
 
