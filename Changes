@@ -1,5 +1,9 @@
 Revision history for BioX-Tax-Kraken
 
+0.002 2026-10-14
+         Remove is_ancestor() as the argument order seems perilous
+         a_isa_b() now returns true if the two inputs IDs are identical
+
 0.001003 2026-10-14
          Fix POD formatting
 

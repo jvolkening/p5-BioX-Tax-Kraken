@@ -74,12 +74,12 @@ sub children {
 
     return if (! defined $self->{tax}->{$tid});
     return grep {
-        $self->is_ancestor($_, $tid)
+        $self->a_isa_b($_, $tid)
     } keys %{ $self->{tax} };
 
 }
 
-sub is_ancestor {
+sub a_isa_b {
 
     my ($self, $child, $parent, $visited) = @_;
 
@@ -87,7 +87,7 @@ sub is_ancestor {
 
     return if (! defined $self->{tax}->{$child});
     return if (! defined $self->{tax}->{$parent});
-    return 0 if ($child eq $parent); # save some time, maybe
+    return 1 if ($child eq $parent); # save some time, maybe
 
     my $tag = "$child\b$parent";
     return $self->{_c_is_ancestor}->{$tag}
@@ -109,7 +109,7 @@ sub is_ancestor {
         $result = 0;
     }
     else {
-        $result = $self->is_ancestor( $p, $parent, $visited );
+        $result = $self->a_isa_b( $p, $parent, $visited );
     }
     $self->{_c_is_ancestor}->{$tag} = $result;
     delete $visited->{$child};
@@ -117,9 +117,6 @@ sub is_ancestor {
     return $result;
 
 }
-
-# alias method
-*a_isa_b = \&is_ancestor;
 
 sub lineage {
 
@@ -257,10 +254,8 @@ BioX::Tax::Kraken - simple access to Kraken-style taxDB taxonomy database
     );
     # 'Gallus'
 
-    say $tax->is_ancestor(CHICKEN, VERTEBRATA) ? 'Y' : 'N';
+    say $tax->a_isa_b(CHICKEN, VERTEBRATA) ? 'Y' : 'N';
     # 'Y'
-    say $tax->is_ancestor(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
-    # 'N'
     say $tax->a_isa_b(CHICKEN, WHITE_OAK) ? 'Y' : 'N';
     # 'N'
     say $tax->name(
@@ -359,21 +354,17 @@ Given a valid taxonomic ID, fetch the associated property from the database.
 
 Returns a scalar string, or undefined if no entry was found for the input ID.
 
-=item B<is_ancestor> I<child ID> I<parent ID>
+=item B<a_isa_b> I<child ID> I<parent ID>
 
     say "That explains a lot!"
-        if $tax->is_ancestor(9606, 9443);
+        if $tax->a_isa_b(9606, 9443);
 
 Given two valid taxonomic IDs, queries to database to check if the second ID
-is an ancestor (not necessarily direct) of the first.
+is an ancestor (not necessarily direct) of the first. Also returns true if the
+IDs are identical (as implied by the method name).
 
 Returns a boolean value, or undefined if either ID was not found in the
 database.
-
-=item B<a_isa_b> I<child ID> I<parent ID>
-
-Alias of C<is_ancestor> whose name makes it a little easier to remember the
-order of arguments
 
 =item B<lineage> I<tax ID>
 

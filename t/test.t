@@ -69,36 +69,15 @@ is(
     'parent() returns undef for invalid ID'
 );
 
-# Test is_ancestor() method
+# Test a_isa_b() method
 ok(
-    $tax->is_ancestor(9031, 9030),
-    'is_ancestor() detects direct parent'
-);
-ok(
-    $tax->is_ancestor(9031, 9005),
-    'is_ancestor() detects distant ancestor'
+    $tax->a_isa_b(9031, 9030),
+    'a_isa_b() detects direct parent'
 );
 ok(
-    $tax->is_ancestor(9031, 7742),
-    'is_ancestor() detects Vertebrata ancestor'
+    $tax->a_isa_b(9031, 9005),
+    'a_isa_b() detects distant ancestor'
 );
-ok(
-    !$tax->is_ancestor(9031, 3880),
-    'is_ancestor() returns false for non-ancestor'
-);
-ok(
-    !$tax->is_ancestor(9031, 9031),
-    'is_ancestor() returns false for self-compare'
-);
-is(
-    $tax->is_ancestor(99999, 9030) => undef,
-    'is_ancestor() returns undef for invalid child ID'
-);
-is(
-    $tax->is_ancestor(9031, 99999) => undef,
-    'is_ancestor() returns undef for invalid parent ID'
-);
-# quick checks of alias
 ok(
     $tax->a_isa_b(9031, 7742),
     'a_isa_b() detects Vertebrata ancestor'
@@ -106,6 +85,18 @@ ok(
 ok(
     !$tax->a_isa_b(9031, 3880),
     'a_isa_b() returns false for non-ancestor'
+);
+ok(
+    $tax->a_isa_b(9031, 9031),
+    'a_isa_b() returns true for self-compare'
+);
+is(
+    $tax->a_isa_b(99999, 9030) => undef,
+    'a_isa_b() returns undef for invalid child ID'
+);
+is(
+    $tax->a_isa_b(9031, 99999) => undef,
+    'a_isa_b() returns undef for invalid parent ID'
 );
 
 # Test lineage() method
@@ -240,9 +231,9 @@ like(
 
 $tax = BioX::Tax::Kraken->new($test_db_loop);
 like(
-    dies { $tax->is_ancestor(99992, 1) },
+    dies { $tax->a_isa_b(99992, 1) },
     qr/Cycle detected/,
-    'is_ancestor() throws expected error on cylical path'
+    'a_isa_b() throws expected error on cylical path'
 );
 like(
     dies { $tax->lineage(99993) },
