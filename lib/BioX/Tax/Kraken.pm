@@ -12,6 +12,7 @@ use constant N_VALID_COLUMNS => 4;
 use constant PARENT => 0;
 use constant NAME => 1;
 use constant RANK => 2;
+use constant CHILDREN => 3;
 
 sub new {
 
@@ -217,7 +218,8 @@ sub _load {
         # uses < 50% memory to store data as null-padded strings instead of
         # Perl nested arrays or hashes. Can be significantly slower to extract
         # data on millions of calls, though.
-        $self->{tax}->{$f[0]} = join "\0", @f[1..3];
+        $self->{tax}->{$f[0]} = join "\0", @f[1..3], ($self->{tax}->{$f[0]} // ());
+        $self->{tax}->{$f[1]} .= "\0$f[0]";
     };
     close $fh;
     $self->{fh} = undef;
