@@ -1,4 +1,4 @@
-package BioX::Tax::Kraken 0.001003;
+package BioX::Tax::Kraken 0.002001;
 
 use strict;
 use warnings;
@@ -74,9 +74,15 @@ sub children {
     my ($self, $tid) = @_;
 
     return if (! defined $self->{tax}->{$tid});
-    return grep {
-        $self->a_isa_b($_, $tid)
-    } keys %{ $self->{tax} };
+    return @{ $self->{_c_children}->{$tid} }
+        if (defined $self->{_c_children}->{$tid});
+    my @all = split "\0", $self->{tax}->{$tid};
+    return () if ($#all < 3);
+    my @c = $#all < 3
+        ? ()
+        : @all[3..$#all];
+    $self->{_c_children}->{$tid} = \@c;
+    return @c;
 
 }
 
