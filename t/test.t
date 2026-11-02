@@ -145,18 +145,22 @@ ok(
 );
 
 # Test children() method
-my @children = $tax->children(9030);
+my @children = $tax->children(2759);
 ok(
-    @children > 0,
-    'children() returns at least one child'
+    @children > 1,
+    'children() returns at least two children'
 );
 ok(
-    grep { $_ eq '9031' } @children,
-    'children() includes expected child (9031)'
+    grep { $_ eq '33154' } @children,
+    'children() includes expected child (33154)'
 );
 is(
     $tax->children(99999) => undef,
     'children() returns undef for invalid ID'
+);
+is(
+    [$tax->children(9031)] => [],
+    'children() returns empty list for leaf nodes'
 );
 
 # Test lca() method with two IDs

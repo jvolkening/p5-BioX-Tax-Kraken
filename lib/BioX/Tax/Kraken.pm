@@ -402,15 +402,10 @@ in the database.
 
     my @descendents = $tax->children(9031);
 
-Given a valid tax ID, traverses the taxonomic tree to collect all intermediate
-and leaf nodes that descend from that ID. BEWARE: The class does not currently
-store any back-references when parsing the input database. Thus, unlike all
-other instance methods, this method currently must traverse the *entire*
-database each time it is called, and it therefore will be a significant
-bottleneck if called over thousands or millions of inputs.
+Given a valid tax ID, returns a list of direct descendents (if any).
 
-Returns an unsorted list of IDs, or undefined if the given ID was not
-found in the database.
+Returns an unsorted array of IDs, an empty array (for taxa with no children),
+or undefined if the given ID was not found in the database.
 
 =back
 
