@@ -147,7 +147,7 @@ ok(
 # Test children() method
 my @children = $tax->children(2759);
 is(
-    [sort {$a <=> $b} @children] => [sort {$a <=> $b} 33090, 33154],
+    [sort {$a <=> $b} @children] => [33090, 33154],
     'children() returns the two expected children'
 );
 is(
@@ -157,6 +157,12 @@ is(
 is(
     [$tax->children(9031)] => [],
     'children() returns empty list for leaf nodes'
+);
+# check behavior when children preceed parent in input file
+@children = $tax->children(131567);
+is(
+    [sort {$a <=> $b} @children] => [2, 2759],
+    'children() returns the two expected children when children come first'
 );
 
 # Test lca() method with two IDs
