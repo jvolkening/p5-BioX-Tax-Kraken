@@ -16,7 +16,7 @@ jobs:
         perl-version:
           - '5.44'
           - '5.36'
-          - '5.16'
+          - '5.24'
         include:
           - perl-version: '5.44'
             os: ubuntu-latest
