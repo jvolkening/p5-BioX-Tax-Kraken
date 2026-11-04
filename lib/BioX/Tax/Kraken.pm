@@ -2,7 +2,7 @@ package BioX::Tax::Kraken 0.002002;
 
 use strict;
 use warnings;
-use 5.024;
+use 5.026;
 use autodie;
 
 use IPC::Cmd qw/can_run/;
